@@ -7,24 +7,38 @@ import '../Models/ProductsModel.dart';
 
 class ProductController extends GetxController {
   var products = <Product>[].obs;
-  static List<Product> cartItems = [];
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
+  static RxMap cartItems = {}.obs;
 
   static void addToCart(Product product) {
-    cartItems.add(product);
+    if (cartItems.containsKey(product)) {
+      cartItems[product] = cartItems[product]! + 1;
+    } else {
+      cartItems[product] = 1;
+    }
   }
 
   static double getTotalPrice() {
     double totalPrice = 0;
-    for (Product product in cartItems) {
-      totalPrice += double.parse(product.price);
-    }
+    cartItems.forEach((product, quantity) {
+      totalPrice += double.parse(product.price) * quantity;
+    });
     return totalPrice;
+  }
+
+  static void removeItem(Product product) {
+    cartItems.remove(product);
+  }
+
+  static void increaseQuantity(Product product) {
+    cartItems[product] = (cartItems[product] ?? 0) + 1;
+  }
+
+  static void decreaseQuantity(Product product) {
+    if (cartItems[product] == 1) {
+      removeItem(product);
+    } else {
+      cartItems[product] = cartItems[product]! - 1;
+    }
   }
 
   void fetchProducts(int index) async {
