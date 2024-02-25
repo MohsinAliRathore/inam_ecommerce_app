@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:inam_ecomerce_app/Screens/HomeScreen.dart';
-import 'package:inam_ecomerce_app/Screens/LoginScreen.dart';
 import 'package:inam_ecomerce_app/Screens/MainScreen.dart';
 
 void main() {
@@ -14,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       home: MainScreen(),
     );
   }

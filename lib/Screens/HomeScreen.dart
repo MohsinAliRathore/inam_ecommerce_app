@@ -79,8 +79,7 @@ class HomeScreen extends StatelessWidget {
             if (categoryController.isLoading.value) {
               return Center(child: CircularProgressIndicator());
             } else {
-              return Container(
-                height: Get.size.height*0.65,
+              return Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,

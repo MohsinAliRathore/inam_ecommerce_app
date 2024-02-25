@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:inam_ecomerce_app/Controllers/UserController.dart';
 import 'package:inam_ecomerce_app/Screens/OTPVerification.dart';
 import 'package:inam_ecomerce_app/Widgets/CustomTextField.dart';
 
@@ -10,7 +11,7 @@ class NumberVerification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController();
+    final UserController userController = UserController.instance;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -30,7 +31,7 @@ class NumberVerification extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: CustomTextField(controller: controller, label: "Phone Number", hint: "+9230013456789",),
+                child: CustomTextField(controller: userController.numberController, label: "Phone Number", hint: "+9230013456789",),
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -39,7 +40,8 @@ class NumberVerification extends StatelessWidget {
                   height: 48,
                   child: ElevatedButton(
                       onPressed: (){
-                        Get.off(OTPVerification());
+                        userController.getOtp();
+                        //Get.off(OTPVerification());
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.backgroundColor,
