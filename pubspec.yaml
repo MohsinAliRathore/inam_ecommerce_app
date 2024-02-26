@@ -41,6 +41,7 @@ dependencies:
   fluttertoast: ^8.2.4
   connectivity_plus: ^5.0.2
   flutter_otp_text_field: ^1.1.1
+  another_flutter_splash_screen: ^1.2.0
   geolocator: ^10.1.0
   geocoding: ^2.1.1
 

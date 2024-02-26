@@ -120,7 +120,9 @@ class UserController extends GetxController {
         var decodedResponse = jsonDecode(response.body);
         name = decodedResponse["data"]["name"];
         token = decodedResponse["data"]["token"];
+        address = decodedResponse["data"]["address"];
         localStorage.write("token", token);
+        localStorage.write("address", address);
         if (name == null || name == "null") {
           Get.to(() => RegisterScreen());
         } else {

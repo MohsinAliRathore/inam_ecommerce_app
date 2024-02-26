@@ -12,6 +12,7 @@ class CheckoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var localStorage = GetStorage();
+    late var userAddress;
     return Scaffold(
       appBar: AppBar(
         title: Text('Checkout'),
@@ -71,6 +72,7 @@ class CheckoutPage extends StatelessWidget {
                           ))
                         : ElevatedButton(
                             onPressed: () async {
+                              userAddress = localStorage.read("address");
                               productController.isLoading.value = true;
                               String token = localStorage.read("token");
                               print(token);
@@ -79,7 +81,7 @@ class CheckoutPage extends StatelessWidget {
                                   .cast<Product>()
                                   .toList();
                               await ProductController.createOrder(
-                                  token, products);
+                                  token, products, userAddress);
                               productController.isLoading.value = false;
                             },
                             child: Text('Place Order'),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:inam_ecomerce_app/AppTheme/AppColors.dart';
 import 'package:inam_ecomerce_app/Controllers/ProductController.dart';
@@ -6,11 +7,14 @@ import 'package:inam_ecomerce_app/Screens/NumberVerification.dart';
 import 'package:inam_ecomerce_app/Screens/ProductScreens.dart';
 
 import '../Controllers/CategoryController.dart';
+import '../Validators/InternetValidator.dart';
 import '../Views/CategoryCard.dart';
 
 class HomeScreen extends StatelessWidget {
   final CategoryController categoryController = Get.put(CategoryController());
   final ProductController productController = Get.put(ProductController());
+  InternetValidator internetValidator = InternetValidator();
+  late RxBool isInternetAvailable =false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +82,10 @@ class HomeScreen extends StatelessWidget {
           Obx(() {
             if (categoryController.isLoading.value) {
               return Center(child: CircularProgressIndicator());
-            } else {
+            } else if(categoryController.categories.isEmpty){
+              return Center(child: Text("No Categories Available"),);
+            }
+            else{
               return Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -90,10 +97,18 @@ class HomeScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                         child: CategoryCard(category: categoryController.categories[index]),
-                      onTap: (){
+                      onTap: () async{
+                        isInternetAvailable.value = await InternetValidator.isInternetAvailable();
+                        if(isInternetAvailable.value==true){
                           print(categoryController.categories[index].id);
                           productController.fetchProducts(categoryController.categories[index].id);
                           Get.to(ProductScreen());
+                        }else{
+                          Fluttertoast.showToast(
+                              msg: "You don't have a internet connection.",
+                              toastLength: Toast.LENGTH_LONG
+                          );
+                        }
                       },
                     );
                   },

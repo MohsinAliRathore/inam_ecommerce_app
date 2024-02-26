@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:inam_ecomerce_app/Controllers/ProductController.dart';
 import 'package:inam_ecomerce_app/Views/ProductCard.dart';
 
-import '../Controllers/CategoryController.dart';
-
 class ProductScreen extends StatelessWidget {
   final ProductController productController = Get.put(ProductController());
 
@@ -12,14 +10,17 @@ class ProductScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Products'),
+        title: const Text('Products'),
       ),
       body: Obx(() {
-        if (productController.products.isEmpty) {
-          return Center(child: CircularProgressIndicator());
+        if(productController.isLoading.value == true){
+          return const Center(child: CircularProgressIndicator());
+        }
+        else if (productController.products.isEmpty) {
+          return const Center(child: Text("No products available in this Category"));
         } else {
           return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 8.0,
               mainAxisSpacing: 8.0,

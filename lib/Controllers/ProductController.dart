@@ -1,5 +1,5 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:inam_ecomerce_app/Utils/Urls.dart';
 import 'dart:convert';
@@ -50,8 +50,8 @@ class ProductController extends GetxController {
     }
   }
 
-  static Future<void> createOrder(String token, List<Product> products) async {
-    double totalPrice =await getTotalPrice();
+  static Future<void> createOrder(String token, List<Product> products, String userAddress) async {
+    double totalPrice = getTotalPrice();
     int totalQuantity = cartItems.values.reduce((a, b) => a + b);
 
     List<Map<String, dynamic>> orderDetails = [];
@@ -68,7 +68,7 @@ class ProductController extends GetxController {
       "total": totalPrice,
       "qty": totalQuantity,
       "delivery_fee": 50,
-      "address": "house street",
+      "address": userAddress,
       "order_details": orderDetails,
     };
 
@@ -82,9 +82,13 @@ class ProductController extends GetxController {
         },
         body: jsonEncode(requestBody)
       );
-      print(jsonEncode(requestBody));
       if (response.statusCode == 200) {
-        print("Order created successfully!");
+        Fluttertoast.showToast(
+            msg: "Your order is placed successfully",
+            toastLength: Toast.LENGTH_LONG
+        );
+        cartItems.clear();
+
       } else {
         print("error body: ${response.body}");
         print(response.statusCode);
