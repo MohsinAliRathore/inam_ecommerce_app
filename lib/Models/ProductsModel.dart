@@ -11,6 +11,7 @@ class Product {
   final String available;
   final DateTime createdAt;
   final DateTime updatedAt;
+  int quantity; // New attribute for quantity
 
   Product({
     required this.id,
@@ -25,6 +26,7 @@ class Product {
     required this.available,
     required this.createdAt,
     required this.updatedAt,
+    this.quantity = 0, // Default quantity is set to 0
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {

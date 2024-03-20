@@ -16,8 +16,8 @@ class SplashScreen extends StatelessWidget {
         onEnd: () {
         },
         childWidget: SizedBox(
-          height: 200,
-          width: 200,
+          height: 250,
+          width: 250,
           child: Image.asset("Assets/Images/LOGO.png"),
         ),
         animationDuration: Duration(seconds: 3),

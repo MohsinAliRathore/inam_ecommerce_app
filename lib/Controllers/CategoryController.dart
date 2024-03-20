@@ -23,6 +23,7 @@ class CategoryController extends GetxController {
   checkInternetAndGetProducts() async {
     isInternetAvailable.value = await InternetValidator.isInternetAvailable();
     if(isInternetAvailable.value ==true){
+      print("fetch called");
       fetchData();
     }else{
       Fluttertoast.showToast(
@@ -35,7 +36,7 @@ class CategoryController extends GetxController {
   Future<void> fetchData() async {
     try {
       isLoading.value= true;
-      var response = await http.get(Uri.parse(Urls.categoryList));
+      var response = await http.get(Uri.parse(Urls.categoryList),headers: {"Accept": "application/json"},);
       if (response.statusCode == 200) {
         isLoading.value=false;
         Categories categoryData = categoriesFromJson(response.body);

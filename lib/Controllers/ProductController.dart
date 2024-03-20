@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -10,15 +11,18 @@ class ProductController extends GetxController {
   static ProductController? _instance;
 
   var products = <Product>[].obs;
-  static RxMap cartItems = {}.obs;
+  RxMap<Product, int> cartItems = <Product, int>{}.obs;
   RxBool isLoading = false.obs;
+  RxBool orderDone =false.obs;
+  double totalPrice = 0;
+  TextEditingController deliveryAddressController = TextEditingController();
 
   static ProductController get instance {
     _instance ??= ProductController();
     return _instance!;
   }
 
-  static void addToCart(Product product) {
+  void addToCart(Product product) {
     if (cartItems.containsKey(product)) {
       cartItems[product] = cartItems[product]! + 1;
     } else {
@@ -26,23 +30,25 @@ class ProductController extends GetxController {
     }
   }
 
-  static double getTotalPrice() {
+  double getTotalPrice() {
     double totalPrice = 0;
     cartItems.forEach((product, quantity) {
-      totalPrice += double.parse(product.price) * quantity;
+      double productTotalPrice = double.parse(product.price) * quantity!;
+      totalPrice += productTotalPrice;
     });
+
     return totalPrice;
   }
 
-  static void removeItem(Product product) {
+  void removeItem(Product product) {
     cartItems.remove(product);
   }
 
-  static void increaseQuantity(Product product) {
+  void increaseQuantity(Product product) {
     cartItems[product] = (cartItems[product] ?? 0) + 1;
   }
 
-  static void decreaseQuantity(Product product) {
+  void decreaseQuantity(Product product) {
     if (cartItems[product] == 1) {
       removeItem(product);
     } else {
@@ -50,8 +56,8 @@ class ProductController extends GetxController {
     }
   }
 
-  static Future<void> createOrder(String token, List<Product> products, String userAddress) async {
-    double totalPrice = getTotalPrice();
+  Future<void> createOrder(String token, List<Product> products) async {
+    totalPrice = getTotalPrice();
     int totalQuantity = cartItems.values.reduce((a, b) => a + b);
 
     List<Map<String, dynamic>> orderDetails = [];
@@ -68,30 +74,36 @@ class ProductController extends GetxController {
       "total": totalPrice,
       "qty": totalQuantity,
       "delivery_fee": 50,
-      "address": userAddress,
+      "address": deliveryAddressController.text,
       "order_details": orderDetails,
     };
 
     try {
       final response = await http.post(
-        Uri.parse(Urls.createOrder),
-        headers:{
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: jsonEncode(requestBody)
+          Uri.parse(Urls.createOrder),
+          headers:{
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+          body: jsonEncode(requestBody)
       );
       if (response.statusCode == 200) {
         Fluttertoast.showToast(
             msg: "Your order is placed successfully",
             toastLength: Toast.LENGTH_LONG
         );
+        totalPrice=0;
+        orderDone.value=true;
         cartItems.clear();
-
+        deliveryAddressController.clear();
       } else {
         print("error body: ${response.body}");
         print(response.statusCode);
+        Fluttertoast.showToast(
+            msg: "Unable to place your order.",
+            toastLength: Toast.LENGTH_LONG
+        );
       }
     } catch (e) {
       print("Error creating order: $e");
