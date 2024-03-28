@@ -145,37 +145,51 @@ class UserController extends GetxController {
                 msg: "OTP verified",
                 toastLength: Toast.LENGTH_LONG
             );
+            numberController.clear();
             var decodedResponse = jsonDecode(response.body);
             name = decodedResponse["data"]["name"];
             token = decodedResponse["data"]["token"];
             address = decodedResponse["data"]["address"];
               MyLoginKey ="yes";
               localStorage.write("token", token);
-              localStorage.write("address", address);
-              localStorage.write("isLogin", MyLoginKey);
-              localStorage.write("name", name);
-              if(isFromCart.value == true){
+              if(name == null || name == "null" || address == null || address == "null"){
                 homeController.isHomeScreen.value = false;
-                homeController.isCheckOutScreen.value = true;
-                homeController.isProfileScreen.value = false;
-                homeController.isProductScreen.value = false;
-                homeController.isNumberVerificationScreen.value = false;
-                homeController.isOrderListScreen.value = false;
-                homeController.isOTPVerificationScreen.value = false;
-                homeController.isRegisterScreen.value=false;
-                isLogin.value=true;
-              }
-              else{
-                homeController.isHomeScreen.value = true;
                 homeController.isCheckOutScreen.value = false;
                 homeController.isProfileScreen.value = false;
                 homeController.isProductScreen.value = false;
                 homeController.isNumberVerificationScreen.value = false;
                 homeController.isOrderListScreen.value = false;
                 homeController.isOTPVerificationScreen.value = false;
-                homeController.isRegisterScreen.value=false;
+                homeController.isRegisterScreen.value=true;
                 isLogin.value=true;
+              }else{
+                localStorage.write("address", address);
+                localStorage.write("isLogin", MyLoginKey);
+                localStorage.write("name", name);
+                if(isFromCart.value == true){
+                  homeController.isHomeScreen.value = false;
+                  homeController.isCheckOutScreen.value = true;
+                  homeController.isProfileScreen.value = false;
+                  homeController.isProductScreen.value = false;
+                  homeController.isNumberVerificationScreen.value = false;
+                  homeController.isOrderListScreen.value = false;
+                  homeController.isOTPVerificationScreen.value = false;
+                  homeController.isRegisterScreen.value=false;
+                  isLogin.value=true;
+                }
+                else{
+                  homeController.isHomeScreen.value = true;
+                  homeController.isCheckOutScreen.value = false;
+                  homeController.isProfileScreen.value = false;
+                  homeController.isProductScreen.value = false;
+                  homeController.isNumberVerificationScreen.value = false;
+                  homeController.isOrderListScreen.value = false;
+                  homeController.isOTPVerificationScreen.value = false;
+                  homeController.isRegisterScreen.value=false;
+                  isLogin.value=true;
+                }
               }
+
 
             //Get.off(OTPVerification());
           }
@@ -290,6 +304,10 @@ class UserController extends GetxController {
           localStorage.write("name", nameController.text);
           isLogin.value=true;
           isLoading.value=false;
+          addressController.clear();
+          nameController.clear();
+          emailController.clear();
+          passwordController.clear();
           if(isFromCart.value==true){
             homeController.isHomeScreen.value = false;
             homeController.isCheckOutScreen.value = true;

@@ -7,6 +7,8 @@ import 'package:inam_ecomerce_app/Controllers/ProductController.dart';
 import 'package:inam_ecomerce_app/Controllers/UserController.dart';
 import 'package:inam_ecomerce_app/Screens/SplashScreen.dart';
 
+import 'DataBase/DataBaseHelper.dart';
+
 void main() async{
   Get.put(HomeController(), permanent: true);
   Get.put(CategoryController(), permanent: true);
@@ -17,19 +19,41 @@ void main() async{
   var localStorage = GetStorage();
   localStorage.erase();
   String? isLogin =await  localStorage.read("isLogin");
-  print("islogin call"+isLogin.toString());
   if(isLogin =="yes"){
     userController.isLogin.value=true;
   }
-  runApp(const MyApp());
+  runApp( MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final dbHelper = DatabaseHelper();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+  }
 
   @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      dbHelper.deleteDB();
+    }
+  }
+  @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return const GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );

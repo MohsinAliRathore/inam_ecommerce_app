@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:inam_ecomerce_app/Utils/Urls.dart';
 import 'dart:convert';
 
+import '../DataBase/DataBaseHelper.dart';
 import '../Models/ProductsModel.dart';
 
 class ProductController extends GetxController {
@@ -16,6 +17,7 @@ class ProductController extends GetxController {
   RxBool orderDone =false.obs;
   double totalPrice = 0;
   TextEditingController deliveryAddressController = TextEditingController();
+  final dbHelper = DatabaseHelper();
 
   static ProductController get instance {
     _instance ??= ProductController();
@@ -30,18 +32,10 @@ class ProductController extends GetxController {
     }
   }
 
-  double getTotalPrice() {
-    double totalPrice = 0;
-    cartItems.forEach((product, quantity) {
-      double productTotalPrice = double.parse(product.price) * quantity!;
-      totalPrice += productTotalPrice;
-    });
-
-    return totalPrice;
-  }
-
   void removeItem(Product product) {
+    print("remove start");
     cartItems.remove(product);
+    print("remove stop");
   }
 
   void increaseQuantity(Product product) {
@@ -55,6 +49,23 @@ class ProductController extends GetxController {
       cartItems[product] = cartItems[product]! - 1;
     }
   }
+
+
+  double getTotalPrice() {
+    double totalPrice = 0;
+    cartItems.forEach((product, quantity) {
+      if(product.bulkPriceAvailable && quantity>=int.parse(product.bulkQty!)){
+        double productTotalPrice = double.parse(product.bulkPrice!) * quantity!;
+        totalPrice += productTotalPrice;
+      }else{
+        double productTotalPrice = double.parse(product.price) * quantity!;
+        totalPrice += productTotalPrice;
+      }
+    });
+
+    return totalPrice;
+  }
+
 
   Future<void> createOrder(String token, List<Product> products) async {
     totalPrice = getTotalPrice();
@@ -93,6 +104,8 @@ class ProductController extends GetxController {
             msg: "Your order is placed successfully",
             toastLength: Toast.LENGTH_LONG
         );
+
+        dbHelper.deleteDB();
         totalPrice=0;
         orderDone.value=true;
         cartItems.clear();
@@ -109,6 +122,8 @@ class ProductController extends GetxController {
       print("Error creating order: $e");
     }
   }
+
+
 
   void fetchProducts(int index) async {
     isLoading.value=true;

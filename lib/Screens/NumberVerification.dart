@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:inam_ecomerce_app/Controllers/UserController.dart';
@@ -42,6 +43,7 @@ class NumberVerification extends StatelessWidget {
                     controller: userController.numberController,
                     title: "Phone Number",
                     hint: "030013456789",
+                    inputFormatter: FilteringTextInputFormatter.digitsOnly,
                   ),
                 ),
                 Padding(

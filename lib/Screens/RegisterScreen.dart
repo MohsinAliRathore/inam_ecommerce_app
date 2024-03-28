@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:inam_ecomerce_app/Controllers/UserController.dart';
@@ -43,13 +44,11 @@ class RegisterScreen extends StatelessWidget {
                     hint: "Name",
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Name is required';
-                      }
-                      if (RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {
-                        return 'Only alphabets are allowed';
+                        return 'Name is required, Only Alphabets';
                       }
                       return null;
                     },
+                    inputFormatter: FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z\s]*$')),
                   ),
                 ),
                 Padding(
@@ -63,12 +62,13 @@ class RegisterScreen extends StatelessWidget {
                         return 'Email is required';
                       }
                       if (!RegExp(
-                              r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
+                          r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
                           .hasMatch(value)) {
                         return 'Invalid email address';
                       }
                       return null;
                     },
+                    inputFormatter: FilteringTextInputFormatter.deny(RegExp(r'\s')),
                   ),
                 ),
                 Padding(
